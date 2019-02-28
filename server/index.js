@@ -21,4 +21,12 @@ app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`)
 })
 
+//get current date and time from database to ensure it works
+db.query('SELECT NOW()', (err, res) => {
+    if (err.error) {
+        return console.log(err.error);
+    }
+    console.log(`PostgreSQL connected: ${res[0].now}.`)
+})
+
 module.exports = app;
