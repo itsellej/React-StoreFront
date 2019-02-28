@@ -22,13 +22,14 @@ export default class App extends React.Component {
 
   async makeApiRequest() {
     try {
-      const response = await fetch("https://api.myjson.com/bins/7ss86");
+      const response = await fetch('/api/products');
       if (!response.ok) {
         this.setState({ responseError: response.statusText });
         throw Error(response.statusText);
       }
-      const json = await response.json();
-      this.setState({ data: json.products });
+      const data = await response.json();
+      console.log(data)
+      this.setState({ data: data });
     } catch (error) {
       this.setState({ errorMessage: error });
     }
