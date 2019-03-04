@@ -2,7 +2,7 @@ import React from "react";
 import Item from "./components/Item";
 import Cart from "./components/Cart";
 import NavBar from "./components/NavBar";
-import "./App.css";
+import "./app.css";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -15,44 +15,64 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    await this.makeApiRequest();
-    this.addCartQuantityKey();
+    await this.retrieveProducts();
+    this.setCartQuantityZero();
     this.setItemPrice();
   }
 
-  async makeApiRequest() {
+  async retrieveProducts() {
     try {
-      const response = await fetch("https://api.myjson.com/bins/7ss86");
+      const response = await fetch("/api/products");
       if (!response.ok) {
         this.setState({ responseError: response.statusText });
         throw Error(response.statusText);
       }
       const json = await response.json();
-      this.setState({ data: json.products });
+      this.setState({ data: json });
     } catch (error) {
       this.setState({ errorMessage: error });
     }
   }
 
-  addCartQuantityKey = () => {
-    let shopItems = [...this.state.data];
-    shopItems.forEach(item => {
+  setCartQuantityZero = () => {
+    let items = [...this.state.data];
+    items.forEach(item => {
       item["cart_quantity"] = 0;
     });
-    this.setState({ data: shopItems });
+    this.setState({ data: items });
   };
 
   setItemPrice = () => {
-    let shopItems = [...this.state.data];
-    shopItems.forEach(item => {
+    let items = [...this.state.data];
+    items.forEach(item => {
       const currentPrice = item.price;
       const newPrice = currentPrice / 100;
       item["price"] = newPrice.toFixed(2);
     });
-    this.setState({ data: shopItems });
+    this.setState({ data: items });
   };
 
-  handleAddClick = id => {
+  async updateProduct(id, shop_quantity) {
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: id,
+          shop_quantity: shop_quantity,
+        })
+      });
+      if (!response.ok) {
+        this.setState({ responseError: response.statusText });
+        throw Error(response.statusText);
+      }
+      return await response.json();
+    } catch (error) {
+      this.setState({ errorMessage: error });
+    }
+  }
+
+  handleAddClick = (id) => {
     let items = [...this.state.data];
     let item = { ...items[id] };
     if (item.shop_quantity > 0) {
@@ -84,6 +104,19 @@ export default class App extends React.Component {
     this.setState({ data: items });
   };
 
+  handleCheckoutClick = () => {
+    let items = [...this.state.data];
+    items.forEach(item => {
+      if (item.cart_quantity > 0) {
+        const id = item.id
+        const newShopQuantity = item.shop_quantity
+        this.updateProduct(id, newShopQuantity)
+      }
+    })
+    this.setCartQuantityZero();
+    alert('Thank you for ordering from Nutmeg')
+  }
+
   showCart = () => {
     const { data } = this.state;
     let showCart;
@@ -96,6 +129,7 @@ export default class App extends React.Component {
           onIncrement={this.handleAddClick}
           onDecrement={this.handleMinusClick}
           onRemove={this.handleRemoveClick}
+          onCheckout={this.handleCheckoutClick}
         />
       );
     }
