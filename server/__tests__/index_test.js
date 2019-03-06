@@ -10,7 +10,7 @@ describe('GET /api/products', () => {
     });
 })
 describe('PUT /api/products', () => {
-    test('responds with json and 200 status', function (done) {
+    test('responds with 200 status', function (done) {
         request(app)
             .put('/api/products/1')
             .send({
@@ -23,5 +23,21 @@ describe('PUT /api/products', () => {
                 if (err) return done(err);
                 done();
             });
+    });
+})
+
+describe('GET /users/login', () => {
+    test('responds with 200 status', function (done) {
+        request(app)
+            .get('/users/login')
+            .expect(200, done);
+    });
+})
+
+describe('GET /users/signup', () => {
+    test('responds with 200 status', function (done) {
+        request(app)
+            .get('/users/signup')
+            .expect(200, done);
     });
 })
