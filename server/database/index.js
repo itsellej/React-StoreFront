@@ -1,4 +1,6 @@
 const { Pool } = require('pg');
+const Joi = require('joi');
+const { newUserSchema } = require('../models/User');
 
 const pool = new Pool({
     user: process.env.DATABASE_USER,
@@ -7,6 +9,10 @@ const pool = new Pool({
     password: process.env.DATABASE_PASSWORD,
     port: process.env.DATABASE_PORT
 })
+
+const validateNewUser = (request) => {
+    return Joi.validate(request.body, newUserSchema)
+}
 
 const checkConnection = (request, response) => {
     pool.query('SELECT NOW()', (error, results) => {
@@ -33,10 +39,28 @@ const updateProduct = (request, response) => {
     pool.query('UPDATE products SET shop_quantity = $1 WHERE id = $2', [updatedShopQuantity, id],
         (error, results) => {
             if (error) {
-                return response.status(404).send(`Error updating product with id ${id}`)
+                return response.status(400).send(`Error updating product with id ${id}`)
             }
             return response.status(200).send(`Product with ID: ${id} modified with shop_quantity of ${updatedShopQuantity}`)
         })
 }
 
-module.exports = { checkConnection, getProducts, updateProduct }
+const addNewUser = (request, response) => {
+
+    const validateUser = validateNewUser(request);
+    if (validateUser.error) {
+        return response.status(400).send(validateUser.error.details[0].message);
+    }
+
+    const { first_name, last_name, email, password } = request.body
+
+    pool.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4);', [first_name, last_name, email, password],
+        (error, results) => {
+            if (error) {
+                return response.status(400).send('Error adding user. Please try again')
+            }
+            return response.status(200).send('Registered successfully')
+        })
+}
+
+module.exports = { checkConnection, getProducts, updateProduct, addNewUser }
