@@ -1,8 +1,8 @@
 const express = require('express');
 const db = require('./database');
 
-const ENV = process.env.NODE_ENV;
-const PORT = process.env.PORT || 5000;
+// const ENV = process.env.NODE_ENV;
+// const PORT = process.env.PORT || 5000;
 
 //initialise express and register middleware
 const app = express();
@@ -17,9 +17,9 @@ app.use(express.urlencoded({ extended: false }));
 app.get('/api/products', db.getProducts)
 app.put('/api/products/:id', db.updateProduct)
 
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}...`)
-    db.checkConnection()
-})
+// app.listen(PORT, () => {
+//     console.log(`Server listening on port ${PORT}...`)
+//     db.checkConnection()
+// })
 
 module.exports = app;
