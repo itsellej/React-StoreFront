@@ -9,7 +9,7 @@ const pool = new Pool({
     port: process.env.DATABASE_PORT
 })
 
-const getTime = (request, response) => {
+const checkConnection = (request, response) => {
     pool.query('SELECT NOW()', (error, results) => {
         if (error) {
             return console.log(error);
@@ -21,7 +21,7 @@ const getTime = (request, response) => {
 const getProducts = (request, response) => {
     pool.query('SELECT * FROM products ORDER BY id ASC', (error, results) => {
         if (error) {
-            return "Error"
+            return response.status(404).send('Does not exist')
         }
         response.status(200).json(results.rows)
     })
@@ -34,10 +34,10 @@ const updateProduct = (request, response) => {
     pool.query('UPDATE products SET shop_quantity = $1 WHERE id = $2', [updatedShopQuantity, id],
         (error, results) => {
             if (error) {
-                return "Error"
+                return response.status(404).send(`Error updating product with id ${id}`)
             }
-            response.status(200).send(`Product with ID: ${id} modified with shop_quantity of ${updatedShopQuantity}`)
+            return response.status(200).send(`Product with ID: ${id} modified with shop_quantity of ${updatedShopQuantity}`)
         })
 }
 
-module.exports = { getTime, getProducts, updateProduct }
+module.exports = { checkConnection, getProducts, updateProduct }
