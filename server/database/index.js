@@ -46,21 +46,26 @@ const updateProduct = (request, response) => {
 }
 
 const addNewUser = (request, response) => {
-
-    const validateUser = validateNewUser(request);
-    if (validateUser.error) {
-        return response.status(400).send(validateUser.error.details[0].message);
-    }
-
     const { first_name, last_name, email, password } = request.body
+    const validateUser = validateNewUser(request);
 
-    pool.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4);', [first_name, last_name, email, password],
-        (error, results) => {
-            if (error) {
-                return response.status(400).send('Error adding user. Please try again')
-            }
-            return response.status(200).send('Registered successfully')
+    if (validateUser.error) {
+        const errorMessage = validateUser.error.details[0].message
+        return response.render('signup', {
+            errorMessage, first_name, last_name, email, password
         })
+    } else {
+
+        const { first_name, last_name, email, password } = request.body
+
+        pool.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4);', [first_name, last_name, email, password],
+            (error, results) => {
+                if (error) {
+                    return response.status(400).send('Error adding user. Please try again')
+                }
+                response.status(200).send('Registered successfully')
+            })
+    }
 }
 
 module.exports = { checkConnection, getProducts, updateProduct, addNewUser }
