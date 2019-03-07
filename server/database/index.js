@@ -50,7 +50,7 @@ const addNewUser = (request, response) => {
     const validateUser = validateNewUser(request);
 
     if (validateUser.error) {
-        const errorMessage = validateUser.error.details[0].message
+        let errorMessage = validateUser.error.details[0].message
         return response.render('signup', {
             errorMessage, first_name, last_name, email, password
         })
@@ -58,10 +58,13 @@ const addNewUser = (request, response) => {
 
         const { first_name, last_name, email, password } = request.body
 
-        pool.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4);', [first_name, last_name, email, password],
+        pool.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) WHERE NOT EXISTS (SELECT email from users WHERE email = $3);', [first_name, last_name, email, password],
             (error, results) => {
                 if (error) {
-                    return response.status(400).send('Error adding user. Please try again')
+                    errorMessage = `User already registered with ${email}. Please try again`;
+                    return response.render('signup', {
+                        errorMessage, first_name, last_name, password
+                    })
                 }
                 response.status(200).send('Registered successfully')
             })
