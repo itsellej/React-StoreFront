@@ -19,10 +19,7 @@ describe('PUT /api/products', () => {
 			})
 			.set('Accept', 'application/json')
 			.expect(200)
-			.end(function (err, res) {
-				if (err) return done(err);
-				done();
-			});
+		done();
 	});
 })
 
@@ -55,27 +52,6 @@ describe('POST /users/signup', () => {
 			.set('Accept', 'application/json')
 			.expect(200)
 			.expect('Registered successfully')
-			.end(function (err, res) {
-				if (err) return done(err);
-				done();
-			});
-	});
-
-	test('responds with 400 status', function (done) {
-		request(app)
-			.post('/users/signup')
-			.send({
-				first_name: "Shelly",
-				last_name: "Smith",
-				email: "ssmith@gmail.com",
-				password: "password",
-			})
-			.set('Accept', 'application/json')
-			.expect(200)
-			.expect('Registered successfully')
-			.end(function (err, res) {
-				if (err) return done(err);
-				done();
-			});
+		done()
 	});
 })
