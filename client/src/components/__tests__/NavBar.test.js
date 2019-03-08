@@ -6,5 +6,5 @@ import NavBar from "../NavBar";
 Enzyme.configure({ adapter: new EnzymeAdapter() });
 
 test("renders without crashing", () => {
-    shallow(<NavBar />);
+	shallow(<NavBar />);
 });

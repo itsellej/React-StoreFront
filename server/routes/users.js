@@ -4,11 +4,11 @@ const router = express.Router();
 
 
 router.get('/login', (request, response) => {
-    response.render('login')
+	response.render('login')
 });
 
 router.get('/signup', (request, response) => {
-    response.render('signup')
+	response.render('signup')
 });
 
 router.post('/signup', db.addNewUser);
