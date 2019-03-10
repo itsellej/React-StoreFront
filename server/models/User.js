@@ -1,10 +1,48 @@
-const Joi = require('joi');
+const Sequelize = require('sequelize');
+const bcrypt = require('bcrypt');
 
-const newUserSchema = Joi.object().keys({
-	first_name: Joi.string().min(2).max(70).required(),
-	last_name: Joi.string().min(2).max(70).required(),
-	email: Joi.string().email().required(),
-	password: Joi.string().min(8).max(25).alphanum().required(),
-}).with('name', 'password').with('name', 'email');
+const sequelize = new Sequelize('postgres://ellej1@localhost:5432/shopfront_db');
 
-module.exports = { newUserSchema }
+const User = sequelize.define('users', {
+	username: {
+		type: Sequelize.STRING,
+		unique: true,
+		allowNull: false
+	},
+	firstname: {
+		type: Sequelize.STRING,
+		unique: false,
+		allowNull: false
+	},
+	lastname: {
+		type: Sequelize.STRING,
+		unique: false,
+		allowNull: false
+	},
+	email: {
+		type: Sequelize.STRING,
+		unique: true,
+		allowNull: false
+	},
+	password: {
+		type: Sequelize.STRING,
+		allowNull: false
+	}
+}, {
+		hooks: {
+			beforeCreate: (user) => {
+				const salt = bcrypt.genSaltSync();
+				user.password = bcrypt.hashSync(user.password, salt);
+			}
+		}
+	});
+
+User.prototype.validPassword = function (password) {
+	return bcrypt.compareSync(password, this.password)
+}
+
+sequelize.sync()
+	.then(() => console.log('users table has been successfully created, if one doesn\'t exist'))
+	.catch(error => console.log('This error occured', error));
+
+module.exports = User;

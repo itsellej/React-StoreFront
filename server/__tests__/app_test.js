@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../index')
+const app = require('../app')
 
 describe('GET /api/products', () => {
 	test('responds with json and 200 status', function (done) {
@@ -10,7 +10,7 @@ describe('GET /api/products', () => {
 	});
 })
 describe('PUT /api/products', () => {
-	test('responds with 200 status', function (done) {
+	test('accepts id and shop_quantity and responds with 200 status', function (done) {
 		request(app)
 			.put('/api/products/1')
 			.send({
@@ -23,14 +23,6 @@ describe('PUT /api/products', () => {
 	});
 })
 
-describe('GET /users/login', () => {
-	test('responds with 200 status', function (done) {
-		request(app)
-			.get('/users/login')
-			.expect(200, done);
-	});
-})
-
 describe('GET /users/signup', () => {
 	test('responds with 200 status', function (done) {
 		request(app)
@@ -40,18 +32,41 @@ describe('GET /users/signup', () => {
 })
 
 describe('POST /users/signup', () => {
-	test('responds with 200 status', function (done) {
+	test('accepts new user information and responds with 200 status', function (done) {
 		request(app)
 			.post('/users/signup')
 			.send({
-				first_name: "Shelly",
-				last_name: "Smith",
+				username: "shellbell",
+				firstname: "Shelly",
+				lastname: "Smith",
 				email: "ssmith@gmail.com",
 				password: "password",
 			})
 			.set('Accept', 'application/json')
 			.expect(200)
-			.expect('Registered successfully')
 		done()
 	});
 })
+
+describe('GET /users/login', () => {
+	test('responds with 200 status', function (done) {
+		request(app)
+			.get('/users/login')
+			.expect(200, done);
+	});
+})
+
+describe('POST /users/login', () => {
+	test('accepts username and password and responds with 200 status', function (done) {
+		request(app)
+			.post('/users/login')
+			.send({
+				username: "helloworld",
+				password: "helloworld",
+			})
+			.set('Accept', 'application/json')
+			.expect(200)
+		done()
+	});
+})
+

@@ -1,4 +1,4 @@
-const db = require('../database');
+const db = require('../database/products');
 const express = require('express');
 const router = express.Router();
 

@@ -1,6 +1,4 @@
 const { Pool } = require('pg');
-const Joi = require('joi');
-const { newUserSchema } = require('../models/User');
 
 const pool = new Pool({
 	user: process.env.DATABASE_USER,
@@ -45,30 +43,4 @@ const updateProduct = (request, response) => {
 		})
 }
 
-const addNewUser = (request, response) => {
-	const { first_name, last_name, email, password } = request.body
-	const validateUser = validateNewUser(request);
-
-	if (validateUser.error) {
-		let errorMessage = validateUser.error.details[0].message
-		return response.render('signup', {
-			errorMessage, first_name, last_name, email, password
-		})
-	} else {
-
-		const { first_name, last_name, email, password } = request.body
-
-		pool.query('INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4);', [first_name, last_name, email, password],
-			(error, results) => {
-				if (error) {
-					errorMessage = `User already registered with ${email}. Please try again`;
-					return response.render('signup', {
-						errorMessage, first_name, last_name, password
-					})
-				}
-				response.status(200).send('Registered successfully')
-			})
-	}
-}
-
-module.exports = { checkConnection, getProducts, updateProduct, addNewUser }
+module.exports = { checkConnection, getProducts, updateProduct }
