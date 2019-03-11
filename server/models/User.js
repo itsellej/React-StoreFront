@@ -1,7 +1,20 @@
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
-const sequelize = new Sequelize('postgres://ellej1@localhost:5432/shopfront_db');
+const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USER, process.env.DATABASE_PASSWORD, {
+	host: process.env.DATABASE_HOST,
+	port: process.env.DATABASE_PORT,
+	dialect: 'postgres',
+	operatorsAliases: false,
+
+	pool: {
+		max: 5,
+		min: 0,
+		acquire: 30000,
+		idle: 10000
+	}
+});
 
 const User = sequelize.define('users', {
 	username: {
