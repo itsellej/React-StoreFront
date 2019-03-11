@@ -21,19 +21,26 @@ router.route('/signup')
 		res.sendFile(path.join(__dirname + '/../views/signup.html'));
 	})
 	.post((req, res) => {
-		User.create({
-			username: req.body.username,
-			firstname: req.body.firstname,
-			lastname: req.body.lastname,
-			email: req.body.email,
-			password: req.body.password
-		})
-			.then(user => {
-				req.session.user = user.dataValues;
-				res.redirect('/users/dashboard');
-			})
-			.catch(error => {
-				res.redirect('/users/signup');
+		User.findOne({ where: { username: req.body.username } || { email: req.body.email } })
+			.then(function (user) {
+				if (!user) {
+					User.create({
+						username: req.body.username,
+						firstname: req.body.firstname,
+						lastname: req.body.lastname,
+						email: req.body.email,
+						password: req.body.password
+					})
+						.then(user => {
+							req.session.user = user.dataValues;
+							res.redirect('/users/dashboard');
+						})
+						.catch(error => {
+							res.redirect('/users/signup');
+						});
+				} else {
+					res.redirect('/users/signup');
+				}
 			});
 	});
 
