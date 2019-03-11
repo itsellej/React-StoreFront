@@ -8,10 +8,6 @@ const pool = new Pool({
 	port: process.env.DATABASE_PORT
 })
 
-const validateNewUser = (request) => {
-	return Joi.validate(request.body, newUserSchema)
-}
-
 const checkConnection = (request, response) => {
 	pool.query('SELECT NOW()', (error, results) => {
 		if (error) {
