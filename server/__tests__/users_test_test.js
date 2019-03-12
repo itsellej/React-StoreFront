@@ -1,16 +1,11 @@
 const request = require('supertest');
+const usersTest = require('../database/users_test')
 require('dotenv').config();
-let app;
+const app = require('../app')
 
 beforeEach(() => {
-  // process.env.NODE_ENV = 'test';
-  // jest.resetModules();
-  app = require('../app')
+  usersTest.clearTestUserTable()
 })
-
-// afterEach(() => {
-//   delete process.env.NODE_ENV;
-// });
 
 describe('GET /users/someroute', () => {
   test('responds with 404 status for an incorrect route', function (done) {
@@ -34,11 +29,11 @@ describe('POST /users/signup', () => {
     request(app)
       .post('/users/signup')
       .send({
-        "username": "dddddd",
-        "firstname": "dddddd",
-        "lastname": "dddddd",
-        "email": "dddddd@gmail.com",
-        "password": "dddddddddd"
+        "username": "testuser",
+        "firstname": "test",
+        "lastname": "user",
+        "email": "testuser@gmail.com",
+        "password": "testuser"
       })
       .set('Accept', 'application/json')
       .expect(302, done)
@@ -56,10 +51,19 @@ describe('GET /users/login', () => {
 describe('POST /users/login', () => {
   test('responds with 302 status', function (done) {
     request(app)
+      .post('/users/signup')
+      .send({
+        "username": "testuser",
+        "firstname": "test",
+        "lastname": "user",
+        "email": "testuser@gmail.com",
+        "password": "testuser"
+      });
+    request(app)
       .post('/users/login')
       .send({
-        username: "shellbell",
-        password: "password",
+        username: "testuser",
+        password: "testuser",
       })
       .set('Accept', 'application/json')
       .expect(302, done)
