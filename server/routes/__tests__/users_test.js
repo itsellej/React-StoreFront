@@ -1,7 +1,7 @@
 const request = require('supertest');
-const usersTest = require('../database/users_test')
+const usersTest = require('../../database/users_test')
 require('dotenv').config();
-const app = require('../app')
+const app = require('../../app')
 
 beforeEach(() => {
   usersTest.clearTestUserTable()
@@ -17,7 +17,7 @@ describe('GET /users/someroute', () => {
 })
 
 describe('GET /users/signup', () => {
-  test('responds with 200 status', function (done) {
+  test('responds with 200 status when user navigates to signup page', function (done) {
     request(app)
       .get('/users/signup')
       .expect(200, done);
@@ -25,7 +25,7 @@ describe('GET /users/signup', () => {
 })
 
 describe('POST /users/signup', () => {
-  test('responds with 302 status', function (done) {
+  test('responds with 302 status, whether user signup is successful or not', function (done) {
     request(app)
       .post('/users/signup')
       .send({
@@ -41,7 +41,7 @@ describe('POST /users/signup', () => {
 })
 
 describe('GET /users/login', () => {
-  test('responds with 200 status', function (done) {
+  test('responds with 200 status when user navigates to login page', function (done) {
     request(app)
       .get('/users/login')
       .expect(200, done);
@@ -49,7 +49,7 @@ describe('GET /users/login', () => {
 })
 
 describe('POST /users/login', () => {
-  test('responds with 302 status', function (done) {
+  test('responds with 302 status, whether user login is successful or not', function (done) {
     request(app)
       .post('/users/signup')
       .send({
