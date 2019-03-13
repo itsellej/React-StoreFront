@@ -1,14 +1,9 @@
-const { Pool } = require('pg');
+const pool = require('./pool').pool
 
-const pool = new Pool({
-	user: process.env.DATABASE_USER,
-	host: process.env.DATABASE_HOST,
-	database: 'shopfront_db',
-	password: process.env.DATABASE_PASSWORD,
-	port: process.env.DATABASE_PORT
-})
-
-const checkConnection = (request, response) => {
+const checkConnection = (err, request, response) => {
+	if (err) {
+		return console.error('Error acquiring client', err.stack)
+	}
 	pool.query('SELECT NOW()', (error, results) => {
 		if (error) {
 			return console.log(error);
@@ -18,6 +13,7 @@ const checkConnection = (request, response) => {
 }
 
 const getProducts = (request, response) => {
+	console.log(process.env.DATABASE_NAME)
 	pool.query('SELECT * FROM products ORDER BY id ASC', (error, results) => {
 		if (error) {
 			return response.status(404).send('Does not exist')
