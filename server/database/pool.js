@@ -1,15 +1,9 @@
 const { Pool } = require('pg');
-require('dotenv').config()
-let databaseName;
+require('custom-env').env(true)
 
-if (process.env.NODE_ENV == 'test') {
-  databaseName = process.env.TEST_DATABASE_NAME;
-} else {
-  databaseName = process.env.DATABASE_NAME;
-}
 
 const pool = new Pool({
-  database: databaseName,
+  database: process.env.DATABASE_NAME,
   user: process.env.DATABASE_USER,
   host: process.env.DATABASE_HOST,
   password: process.env.DATABASE_PASSWORD,

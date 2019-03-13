@@ -1,13 +1,14 @@
 const request = require('supertest');
-const usersTest = require('../../database/users_test')
-require('dotenv').config();
-const app = require('../../app')
+const usersTest = require('../database/users');
+const app = require('../app');
+require('custom-env').env(true);
 
 beforeEach(() => {
   usersTest.clearTestUserTable()
-})
+});
 
 describe('GET /users/someroute', () => {
+  console.log(process.env.DATABASE_NAME)
   test('responds with 404 status for an incorrect route', function (done) {
     request(app)
       .get('/users/someroute')

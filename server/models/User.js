@@ -1,27 +1,21 @@
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
-require('dotenv').config();
-let databaseName;
+require('custom-env').env(true)
 
-if (process.env.NODE_ENV == 'test') {
-	databaseName = process.env.TEST_DATABASE_NAME;
-} else {
-	databaseName = process.env.DATABASE_NAME;
-}
+const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USER, process.env.DATABASE_PASSWORD,
+	{
+		host: process.env.DATABASE_HOST,
+		port: process.env.DATABASE_PORT,
+		dialect: 'postgres',
+		operatorsAliases: false,
 
-const sequelize = new Sequelize(databaseName, process.env.DATABASE_USER, process.env.DATABASE_PASSWORD, {
-	host: process.env.DATABASE_HOST,
-	port: process.env.DATABASE_PORT,
-	dialect: 'postgres',
-	operatorsAliases: false,
-
-	pool: {
-		max: 5,
-		min: 0,
-		acquire: 30000,
-		idle: 10000
-	}
-});
+		pool: {
+			max: 5,
+			min: 0,
+			acquire: 30000,
+			idle: 10000
+		}
+	});
 
 const User = sequelize.define('users', {
 	username: {

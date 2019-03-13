@@ -1,5 +1,6 @@
 const request = require('supertest');
-const app = require('../../app')
+const app = require('../app');
+require('custom-env').env(true);
 
 describe('GET /api/products', () => {
 	test('responds with json containing product details, and 200 status', function (done) {
