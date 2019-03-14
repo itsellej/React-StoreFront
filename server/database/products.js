@@ -1,4 +1,6 @@
-const pool = require('./pool').pool
+const { Pool } = require('pg');
+const { config } = require('../config/config')
+const pool = new Pool(config.database)
 
 const checkConnection = (err, request, response) => {
 	if (err) {
@@ -13,12 +15,11 @@ const checkConnection = (err, request, response) => {
 }
 
 const getProducts = (request, response) => {
-	console.log(process.env.DATABASE_NAME)
 	pool.query('SELECT * FROM products ORDER BY id ASC', (error, results) => {
 		if (error) {
 			return response.status(404).send('Does not exist')
 		}
-		response.status(200).json(results.rows)
+		return response.status(200).json(results.rows)
 	})
 }
 
