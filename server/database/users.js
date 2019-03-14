@@ -4,19 +4,19 @@ const pool = new Pool(config.database);
 
 const clearTestUserTable = async () => {
   try {
-    await pool.query('DELETE FROM users')
-    return 'Successfully cleared users table in shopfronttest database';
+    const result = await pool.query('DELETE FROM users');
+    return result;
   } catch (error) {
-    return 'Unable to clear users table in shopfronttest database'
+    return error;
   }
 }
 
 const addNewUser = async (username, firstname, lastname, email, password) => {
   try {
-    await pool.query('INSERT INTO users (username, firstname, lastname, email, password) VALUES ($1, $2, $3, $4, $5)', [username, firstname, lastname, email, password])
-    return 'Successfully added new user to users table';
+    const result = await pool.query('INSERT INTO users (username, firstname, lastname, email, password) VALUES ($1, $2, $3, $4, $5)', [username, firstname, lastname, email, password]);
+    return result;
   } catch (error) {
-    return 'Unable to add user to users table'
+    return error;
   }
 }
 
@@ -29,4 +29,22 @@ const checkEmailExists = async (email) => {
   }
 }
 
-module.exports = { clearTestUserTable, addNewUser, checkEmailExists }
+const checkUsernameExists = async (username) => {
+  try {
+    const result = await pool.query('SELECT EXISTS(SELECT 1 from users WHERE username= $1)', [username]);
+    return result.rows[0].exists
+  } catch (error) {
+    return error;
+  }
+}
+
+const checkUsernamePassword = async (username, password) => {
+  try {
+    const result = await pool.query('SELECT EXISTS(SELECT 1 from users WHERE username = $1 AND password = $2)', [username, password]);
+    return result.rows[0].exists
+  } catch (error) {
+    return error;
+  }
+}
+
+module.exports = { clearTestUserTable, addNewUser, checkEmailExists, checkUsernameExists, checkUsernamePassword }
