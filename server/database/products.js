@@ -18,7 +18,6 @@ const getProducts = async () => {
 	} catch (error) {
 		return false
 	}
-
 }
 
 const updateProduct = async (updatedShopQuantity, id) => {
