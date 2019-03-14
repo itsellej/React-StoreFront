@@ -1,10 +1,6 @@
 const { Pool } = require('pg');
 const { config } = require('../config/config')
-require('custom-env').env(true)
-
-
 const pool = new Pool(config.database)
-
 
 const checkConnection = (err, request, response) => {
 	if (err) {

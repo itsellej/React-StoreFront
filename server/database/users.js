@@ -1,4 +1,6 @@
-const pool = require('./pool').pool
+const { Pool } = require('pg');
+const { config } = require('../config/config')
+const pool = new Pool(config.database);
 
 const clearTestUserTable = () => {
   pool.query('DELETE FROM users', (error, results) => {
